@@ -1,0 +1,105 @@
+/* Background */
+body {
+    background: linear-gradient(to right, #6dd5fa, #2980b9);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Form Container with 3D look */
+.container {
+    width: 420px;
+    margin: 100px auto;
+    padding: 35px 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow:
+        0 15px 25px rgba(0, 0, 0, 0.2),
+        0 8px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    transform: perspective(1000px) rotateX(0deg);
+    transition: all 0.3s ease;
+}
+
+/* Heading */
+h1, h2 {
+    color: #2c3e50;
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+/* Input Fields */
+input[type="number"] {
+    width: 90%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    font-size: 16px;
+    transition: 0.2s ease-in-out;
+}
+
+input[type="number"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Buttons - Predict */
+.predict-btn {
+    padding: 12px 28px;
+    margin-top: 15px;
+    margin-inline: 8px;
+    background: linear-gradient(to right, #00b894, #00cec9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.predict-btn:hover {
+    background: linear-gradient(to right, #0984e3, #74b9ff);
+    transform: scale(1.05);
+}
+
+/* Buttons - Clear */
+.clear-btn {
+    padding: 12px 28px;
+    margin-top: 15px;
+    margin-inline: 8px;
+    background: linear-gradient(to right, #e53935, #d32f2f);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: linear-gradient(to right, #b71c1c, #c62828);
+    transform: scale(1.05);
+}
+
+/* Result Display */
+.result {
+    margin-top: 25px;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 8px;
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

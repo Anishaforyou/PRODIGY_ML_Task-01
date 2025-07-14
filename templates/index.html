@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>House Price Prediction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        html {
+            font-size: clamp(14px, 2.5vw, 18px);
+        }
+
+        .tts-controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tts-controls button {
+            flex: 1 1 40%;
+            min-width: 120px;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .tts-controls .repeat-btn { background-color: #4CAF50; }  /* Green */
+        .tts-controls .pause-btn  { background-color: #f39c12; }  /* Orange */
+        .tts-controls .resume-btn { background-color: #3498db; }  /* Blue */
+        .tts-controls .stop-btn   { background-color: #e74c3c; }  /* Red */
+
+        .tts-controls button:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .tts-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tts-controls button {
+                width: 90%;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏡 House Price Prediction</h1>
+
+        <form action="/predict" method="post" id="priceForm">
+            <label for="sqft">📏 Square Footage:</label>
+            <input type="number" name="sqft" id="sqft" required min="100" max="10000">
+
+            <label for="bedrooms">🛏 Bedrooms:</label>
+            <input type="number" name="bedrooms" id="bedrooms" required min="0" max="10">
+
+            <label for="bathrooms">🛁 Bathrooms:</label>
+            <input type="number" name="bathrooms" id="bathrooms" required min="0" max="10">
+
+            <div>
+                <button type="submit" class="predict-btn">🔮 Predict</button>
+                <button type="button" class="clear-btn" onclick="clearForm()">🧹 Clear</button>
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result" id="result">{{ prediction_text }}</div>
+        <audio id="successSound" src="https://www.soundjay.com/buttons/sounds/button-29.mp3" autoplay></audio>
+
+        <!-- 🎛️ TTS Controls -->
+        <div class="tts-controls">
+            <button class="repeat-btn" onclick="speakAgain()">🔁 Repeat</button>
+            <button class="pause-btn" onclick="pauseSpeech()">⏸ Pause</button>
+            <button class="resume-btn" onclick="resumeSpeech()">▶ Resume</button>
+            <button class="stop-btn" onclick="stopSpeech()">⏹ Stop</button>
+        </div>
+
+        <script>
+            const voices = [];
+            let spokenText = "";
+
+            function speakAgain() {
+                if ('speechSynthesis' in window) {
+                    speechSynthesis.cancel();
+                    const sqft = sessionStorage.getItem('sqft');
+                    const bedrooms = sessionStorage.getItem('bedrooms');
+                    const bathrooms = sessionStorage.getItem('bathrooms');
+                    const result = document.getElementById("result")?.textContent || '';
+
+                    spokenText = `You entered ${sqft} square feet, ${bedrooms} bedrooms, and ${bathrooms} bathrooms. ${result}`;
+
+                    const utter = new SpeechSynthesisUtterance(spokenText);
+                    utter.lang = 'en-US';
+                    utter.pitch = 1;
+                    utter.rate = 1;
+
+                    const allVoices = speechSynthesis.getVoices();
+                    const femaleVoice = allVoices.find(v => v.lang === utter.lang && v.name.toLowerCase().includes("female"));
+                    utter.voice = femaleVoice || allVoices.find(v => v.lang === utter.lang);
+
+                    speechSynthesis.speak(utter);
+                }
+            }
+
+            function pauseSpeech() {
+                if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                    speechSynthesis.pause();
+                }
+            }
+
+            function resumeSpeech() {
+                if (speechSynthesis.paused) {
+                    speechSynthesis.resume();
+                }
+            }
+
+            function stopSpeech() {
+                if (speechSynthesis.speaking) {
+                    speechSynthesis.cancel();
+                }
+            }
+
+            // On load
+            window.onload = () => {
+                if (document.getElementById("result")) {
+                    speakAgain();
+                }
+                sessionStorage.clear();
+            };
+        </script>
+        {% endif %}
+    </div>
+
+    <script>
+        function clearForm() {
+            document.getElementById("priceForm").reset();
+            document.querySelector('.result')?.remove();
+        }
+
+        document.getElementById("priceForm").addEventListener("submit", function (e) {
+            const sqft = document.getElementById("sqft").value;
+            const bed = document.getElementById("bedrooms").value;
+            const bath = document.getElementById("bathrooms").value;
+
+            if (sqft < 100 || sqft > 10000) {
+                alert("Square footage must be between 100 and 10000.");
+                e.preventDefault();
+                return;
+            }
+            if (bed < 0 || bed > 10 || bath < 0 || bath > 10) {
+                alert("Bedrooms/Bathrooms must be between 0 and 10.");
+                e.preventDefault();
+                return;
+            }
+
+            sessionStorage.setItem("sqft", sqft);
+            sessionStorage.setItem("bedrooms", bed);
+            sessionStorage.setItem("bathrooms", bath);
+        });
+    </script>
+</body>
+</html>
